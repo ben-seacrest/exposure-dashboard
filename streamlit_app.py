@@ -24,6 +24,12 @@ logged_in_pages = {
     "Settings": [logout_page]  # Logout page added here
 }
 
+def create_navigation(pages):
+    # Create the navigation sidebar
+    selected_page = st.navigation(pages, position="sidebar")
+    # Run the selected page function
+    selected_page.run()
+    
 def main():
     # Initialize session state keys with default values
     if "logged_in" not in st.session_state:
