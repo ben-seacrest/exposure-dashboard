@@ -244,10 +244,10 @@ def exposure_panel():
 
         st.divider()
         st.write("**Profit / Loss by Symbol**")
-        st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True, use_container_width=True)
+        st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=False, use_container_width=True)
 
         st.write("**Exposure by Symbol (Volume)**")
-        st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=True, use_container_width=True)
+        st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=False, use_container_width=True)
 
 
 # -------------------------------#
