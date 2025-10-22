@@ -192,16 +192,17 @@ def exposure_panel():
     if "notional" in df.columns and df["notional"].notna().any():
         curr_notional = float(df["notional"].sum(skipna=True))
     else:
-        # fallback estimate: |net| * avg_px
-        curr_notional = float((df["net"].abs() * df["avg_px"]).sum(skipna=True)) if {"net","avg_px"}.issubset(df.columns) else 0.0
+        curr_notional = float(
+            (df["net"].abs() * df["avg_px"]).sum(skipna=True)
+        ) if {"net","avg_px"}.issubset(df.columns) else 0.0
     
-    # Pull previous values from session
+    curr_margin = float(df["margin"].sum(skipna=True)) \
+        if ("margin" in df.columns and df["margin"].notna().any()) else None
+    
+    # Previous values from session
     prev_pl       = st.session_state.kpi_prev.get("pl")
     prev_notional = st.session_state.kpi_prev.get("notional")
-    
-    # Compute deltas (None on first run => no arrow)
-    delta_pl       = None if prev_pl is None else curr_pl - prev_pl
-    delta_notional = None if prev_notional is None else curr_notional - prev_notional
+    prev_margin   = st.session_state.kpi_prev.get("margin")
     
     # Render metrics
     k = st.columns(3)
