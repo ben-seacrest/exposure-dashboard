@@ -260,6 +260,9 @@ def exposure_panel():
     st.session_state.kpi_prev["pl"] = curr_pl
     st.session_state.kpi_prev["notional"] = curr_notional
     st.session_state.kpi_prev["margin"] = curr_margin
+
+    st.write(prev_pl)
+    st.write(curr_pl)
     
     st.divider()
 
