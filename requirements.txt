@@ -2,3 +2,6 @@ streamlit
 datetime
 streamlit_extras
 pandas
+json
+requests
+requests.exceptions
