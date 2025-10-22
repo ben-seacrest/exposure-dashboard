@@ -1,7 +1,5 @@
-streamlit
-datetime
-streamlit_extras
+streamlit>=1.50.0
 pandas
-json
 requests
-requests.exceptions
+python-dotenv
+streamlit-extras
