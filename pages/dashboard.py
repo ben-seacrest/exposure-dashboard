@@ -200,31 +200,30 @@ def exposure_panel():
     # Render metrics
     k = st.columns(3)
     with k[0]:
-        with st.container(border=True):
-            st.metric(
-                "Floating P/L",
-                fmt_money(curr_pl),
-                None if delta_pl is None else fmt_money(delta_pl),
-                delta_color="normal"  # green on up, red on down
-            )
+        st.metric(
+            "Floating P/L",
+            fmt_money(curr_pl),
+            None if delta_pl is None else fmt_money(delta_pl),
+            delta_color="normal",
+            border=True,
+        )
     with k[1]:
-        with st.container(border=True):
-            st.metric(
-                "Notional Volume",
-                fmt_money(curr_notional),
-                None if delta_notional is None else fmt_money(delta_notional),
-                delta_color="normal"
-            )
+        st.metric(
+            "Notional Volume",
+            fmt_money(curr_notional),
+            None if delta_notional is None else fmt_money(delta_notional),
+            delta_color="normal",
+            border=True,
+        )
     with k[2]:
-        with st.container(border=True):
-            if "margin" in df.columns and df["margin"].notna().any():
-                # no delta by request; uncomment to add with inverse coloring:
-                prev_margin = st.session_state.kpi_prev.get("margin")
-                curr_margin = float(df["margin"].sum(skipna=True))
-                delta_margin = None if prev_margin is None else curr_margin - prev_margin
-                st.metric("Utilised Margin", fmt_money(float(df["margin"].sum(skipna=True))))
-            else:
-                st.metric("Utilised Margin", "$0.00")
+        if "margin" in df.columns and df["margin"].notna().any():
+            # no delta by request; uncomment to add with inverse coloring:
+            prev_margin = st.session_state.kpi_prev.get("margin")
+            curr_margin = float(df["margin"].sum(skipna=True))
+            delta_margin = None if prev_margin is None else curr_margin - prev_margin
+            st.metric("Utilised Margin", fmt_money(float(df["margin"].sum(skipna=True))), border=True)
+        else:
+            st.metric("Utilised Margin", "$0.00", border=True)
     
     # Update stored previous values *after* rendering
     st.session_state.kpi_prev["pl"] = curr_pl
