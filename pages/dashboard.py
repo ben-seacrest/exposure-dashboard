@@ -8,32 +8,20 @@ from requests.exceptions import ReadTimeout, ConnectionError
 # -------------------------------#
 # Centroid endpoints
 # -------------------------------#
-LOGIN_URL = "https://bridge.centroidsol.com/v2/api/login"
-POS_URL   = "https://bridge.centroidsol.com/v1/api/position"
-
-
-# -------------------------------#
-# Secrets-driven config
-# -------------------------------#
-def _get_centroid_secret(key, default=""):
-    return st.secrets.get("centroid", {}).get(key, default)
-
-USERNAME    = _get_centroid_secret("username")
-PASSWORD    = _get_centroid_secret("password")
-CLIENT_CODE = _get_centroid_secret("client_code", "")  # ok if blank; we also read it from /login
-ACCOUNTS    = _get_centroid_secret("accounts", [])     # e.g. ["CLIENT tem_b"]
+centroid = st.secrets["centroid"]
+LOGIN_URL = centroid["login_url"]
+POS_URL   = centroid["positions_url"]
+USERNAME  = centroid["username"]
+PASSWORD  = centroid["password"]
+CLIENT_CODE = centroid.get("client_code", "")
+ACCOUNTS = centroid.get("accounts", [])
 
 
 # -------------------------------#
 # Helpers
 # -------------------------------#
 def normalize_accounts(accounts):
-    """
-    Accepts list like ["CLIENT tem_b", "CLIENT||tem_b", "140276"] and
-    builds two patterns to try:
-      - Prefixed:  ["CLIENT||tem_b", "CLIENT||140276", ...]
-      - Raw:       ["CLIENT tem_b", "CLIENT||tem_b", "140276", ...]
-    """
+
     normalized, raw = [], []
     for a in accounts or []:
         a = str(a).strip()
