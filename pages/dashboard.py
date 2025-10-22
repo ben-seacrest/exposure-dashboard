@@ -185,85 +185,58 @@ def exposure_panel():
         st.warning("Empty DataFrame after normalization.")
         return
 
-   # ---------- KPI block with deltas for all three ----------
-    # Ensure prev storage (inside fragment)
-    if "kpi_prev" not in st.session_state:
-        st.session_state.kpi_prev = {"pl": None, "notional": None, "margin": None}
-    
-    EPS = 1e-6  # treat tiny changes as zero/noise
-    
-    # Current snapshot
+    # ----- KPIs with deltas -----
+    # Current values
     curr_pl = float(df["pl"].sum(skipna=True))
     
     if "notional" in df.columns and df["notional"].notna().any():
         curr_notional = float(df["notional"].sum(skipna=True))
     else:
-        curr_notional = float(
-            (df["net"].abs() * df["avg_px"]).sum(skipna=True)
-        ) if {"net", "avg_px"}.issubset(df.columns) else 0.0
+        # fallback estimate: |net| * avg_px
+        curr_notional = float((df["net"].abs() * df["avg_px"]).sum(skipna=True)) if {"net","avg_px"}.issubset(df.columns) else 0.0
     
-    curr_margin = None
-    if "margin" in df.columns and df["margin"].notna().any():
-        curr_margin = float(df["margin"].sum(skipna=True))
-    
-    # Previous snapshot
+    # Pull previous values from session
     prev_pl       = st.session_state.kpi_prev.get("pl")
     prev_notional = st.session_state.kpi_prev.get("notional")
-    prev_margin   = st.session_state.kpi_prev.get("margin")
     
-    # Numeric deltas (None on first run; hide near-zero)
-    def nz_delta(curr, prev):
-        if prev is None:
-            return None
-        d = curr - prev
-        return None if abs(d) < EPS else d
-    
-    delta_pl_num       = nz_delta(curr_pl, prev_pl)
-    delta_notional_num = nz_delta(curr_notional, prev_notional)
-    delta_margin_num   = nz_delta(curr_margin, prev_margin) if curr_margin is not None else None
+    # Compute deltas (None on first run => no arrow)
+    delta_pl       = None if prev_pl is None else curr_pl - prev_pl
+    delta_notional = None if prev_notional is None else curr_notional - prev_notional
     
     # Render metrics
     k = st.columns(3)
-    
     with k[0]:
         with st.container(border=True):
             st.metric(
                 "Floating P/L",
                 fmt_money(curr_pl),
-                delta=None if delta_pl_num is None else float(delta_pl_num),
-                delta_color="normal",  # green up / red down
+                None if delta_pl is None else fmt_money(delta_pl),
+                delta_color="normal"  # green on up, red on down
             )
-    
     with k[1]:
         with st.container(border=True):
             st.metric(
                 "Notional Volume",
                 fmt_money(curr_notional),
-                delta=None if delta_notional_num is None else float(delta_notional_num),
-                delta_color="normal",
+                None if delta_notional is None else fmt_money(delta_notional),
+                delta_color="normal"
             )
-    
     with k[2]:
         with st.container(border=True):
-            # For Margin, lower is generally better -> inverse coloring
-            if curr_margin is not None:
-                st.metric(
-                    "Utilised Margin",
-                    fmt_money(curr_margin),
-                    delta=None if delta_margin_num is None else float(delta_margin_num),
-                    delta_color="inverse",  # green on down / red on up
-                )
+            if "margin" in df.columns and df["margin"].notna().any():
+                # no delta by request; uncomment to add with inverse coloring:
+                prev_margin = st.session_state.kpi_prev.get("margin")
+                curr_margin = float(df["margin"].sum(skipna=True))
+                delta_margin = None if prev_margin is None else curr_margin - prev_margin
+                st.metric("Utilised Margin", fmt_money(float(df["margin"].sum(skipna=True))))
             else:
-                st.metric("Utilised Margin", "$0.00", delta=None, delta_color="off")
+                st.metric("Utilised Margin", "$0.00")
     
-    # Persist AFTER rendering
+    # Update stored previous values *after* rendering
     st.session_state.kpi_prev["pl"] = curr_pl
     st.session_state.kpi_prev["notional"] = curr_notional
-    st.session_state.kpi_prev["margin"] = curr_margin
+    st.session_state.kpi_prev["margin"] = curr_margin  # if you enable margin delta
 
-    st.write(prev_pl)
-    st.write(curr_pl)
-    
     st.divider()
 
     # Filters
