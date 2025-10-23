@@ -223,9 +223,7 @@ def exposure_panel():
         
             st.dataframe(
                 view_display,
-                use_container_width=True,
                 hide_index=True,
-                row_height=30,
                 column_config={
                     "symbol": st.column_config.TextColumn("Symbol"),
                     "net": st.column_config.NumberColumn("Lots", format="accounting"),
@@ -253,10 +251,10 @@ def exposure_panel():
 
         with tab2:
             st.write("**Profit / Loss by Symbol**")
-            st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=False, use_container_width=True)
+            st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
     
             st.write("**Exposure by Symbol (Volume)**")
-            st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=False, use_container_width=True)
+            st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=True)
 
 def dashboard_page():
     first_name = st.session_state.get("first_name", "there")
