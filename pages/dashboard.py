@@ -277,15 +277,15 @@ def exposure_panel():
             st.dataframe(
                 view,
                 hide_index=True,
-                column_config={
-                    "symbol": st.column_config.TextColumn("Symbol"),
-                    "net": st.column_config.NumberColumn("Lots", format="accounting"),
-                    "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
-                    "pl": st.column_config.NumberColumn("P/L", format="dollar"),
-                    "taker": st.column_config.TextColumn("Taker"),
-                    "notional": st.column_config.NumberColumn("Notional", format="dollar"),
-                    "margin": st.column_config.NumberColumn("Margin", format="dollar"),
-                },
+                #column_config={
+                #    "symbol": st.column_config.TextColumn("Symbol"),
+                #    "net": st.column_config.NumberColumn("Lots", format="accounting"),
+                #    "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
+                #    "pl": st.column_config.NumberColumn("P/L", format="dollar"),
+                #    "taker": st.column_config.TextColumn("Taker"),
+                #    "notional": st.column_config.NumberColumn("Notional", format="dollar"),
+                #    "margin": st.column_config.NumberColumn("Margin", format="dollar"),
+                #},
             )
 
             symbols_df = pd.DataFrame(data, columns=["Symbol", "Base", "Quote"])
