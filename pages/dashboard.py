@@ -222,7 +222,7 @@ def exposure_panel():
             view_display = view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]]
         
             st.dataframe(
-                view_display,
+                view,
                 hide_index=True,
                 column_config={
                     "symbol": st.column_config.TextColumn("Symbol"),
