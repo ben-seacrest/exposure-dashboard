@@ -226,12 +226,12 @@ def exposure_panel():
             row_height=30,
             column_config={
                 "symbol": st.column_config.TextColumn("Symbol"),
-                "net": st.column_config.NumberColumn("Lots", format="%.2f"),
-                "avg_px": st.column_config.NumberColumn("Avg. Price", format="%.2f"),
-                "pl": st.column_config.NumberColumn("P/L", format="$%.2f"),
+                "net": st.column_config.NumberColumn("Lots", format="dollar"),
+                "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
+                "pl": st.column_config.NumberColumn("P/L", format="dollar"),
                 "taker": st.column_config.TextColumn("Taker"),
-                "notional": st.column_config.NumberColumn("Notional", format="$%.2f"),
-                "margin": st.column_config.NumberColumn("Margin", format="$%.2f"),
+                "notional": st.column_config.NumberColumn("Notional", format="dollar"),
+                "margin": st.column_config.NumberColumn("Margin", format="dollar"),
             },
         )
     
