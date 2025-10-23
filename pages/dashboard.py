@@ -13,6 +13,59 @@ PASSWORD  = centroid["password"]
 CLIENT_CODE = centroid.get("client_code", "")
 ACCOUNTS = centroid.get("accounts", [])
 
+data = [
+    ["AUDCAD", "AUD", "CAD"],
+    ["AUDCHF", "AUD", "CHF"],
+    ["AUDJPY", "AUD", "JPY"],
+    ["AUDNZD", "AUD", "NZD"],
+    ["AUDUSD", "AUD", "USD"],
+    ["BCHUSD", "BCH", "USD"],
+    ["BRENT", "BRENT", "GBP"],
+    ["BTCUSD", "BTC", "USD"],
+    ["CADCHF", "CAD", "CHF"],
+    ["CADJPY", "CAD", "JPY"],
+    ["CHFJPY", "CHF", "JPY"],
+    ["Cotton", "Cotton", "USD"],
+    ["DE40", "DE40", "EUR"],
+    ["ETHUSD", "ETH", "USD"],
+    ["EURAUD", "EUR", "AUD"],
+    ["EURCAD", "EUR", "CAD"],
+    ["EURCHF", "EUR", "CHF"],
+    ["EURGBP", "EUR", "GBP"],
+    ["EURJPY", "EUR", "JPY"],
+    ["EURNZD", "EUR", "NZD"],
+    ["EURUSD", "EUR", "USD"],
+    ["Gasoil", "Gasoil", "USD"],
+    ["GBPAUD", "GBP", "AUD"],
+    ["GBPCAD", "GBP", "CAD"],
+    ["GBPCHF", "GBP", "CHF"],
+    ["GBPJPY", "GBP", "JPY"],
+    ["GBPNZD", "GBP", "NZD"],
+    ["GBPUSD", "GBP", "USD"],
+    ["JP225", "JP225", "JPY"],
+    ["LTCUSD", "LTC", "USD"],
+    ["NZDCAD", "NZD", "CAD"],
+    ["NZDCHF", "NZD", "CHF"],
+    ["NZDJPY", "NZD", "JPY"],
+    ["NZDUSD", "NZD", "USD"],
+    ["UK100", "UK100", "GBP"],
+    ["US100", "US100", "USD"],
+    ["US30", "US30", "USD"],
+    ["US500", "US500", "USD"],
+    ["USDCAD", "USD", "CAD"],
+    ["USDCHF", "USD", "CHF"],
+    ["USDCNH", "USD", "CNH"],
+    ["USDJPY", "USD", "JPY"],
+    ["USDMXN", "USD", "MXN"],
+    ["USDNOK", "USD", "NOK"],
+    ["USDPLN", "USD", "PLN"],
+    ["USDSEK", "USD", "SEK"],
+    ["USDZAR", "USD", "ZAR"],
+    ["USOIL", "USOIL", "USD"],
+    ["XAGUSD", "XAG", "USD"],
+    ["XAUUSD", "XAU", "USD"],
+]
+
 def normalize_accounts(accounts):
 
     normalized, raw = [], []
@@ -234,6 +287,15 @@ def exposure_panel():
                     "margin": st.column_config.NumberColumn("Margin", format="dollar"),
                 },
             )
+
+            symbols_df = pd.DataFrame(data, columns=["Symbol", "Base", "Quote"])
+            st.dataframe(symbols_df)
+        
+
+
+
+
+    
     
     if {"symbol", "pl", "net"}.issubset(view.columns) and not view.empty:
         pl_by_symbol = (
