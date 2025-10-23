@@ -146,56 +146,6 @@ def fmt_money(val: float) -> str:
         out = f"{val:.2f}"
     return f"{sign}${out}"
 
-
-def symbol_checklist(symbols: list[str], *, state_key: str = "symbol_picker") -> list[str]:
-    """Render a checkbox list of symbols inside a popover and return the selected symbols.
-    Persists selection in st.session_state[state_key].
-    """
-    # Init session state once
-    if state_key not in st.session_state:
-        st.session_state[state_key] = {
-            "selected": set(symbols)  # default: all selected
-        }
-
-    selected: set = st.session_state[state_key]["selected"]
-
-    # Keep selection valid if symbol universe changes
-    selected &= set(symbols)
-
-    with st.popover("Select symbols"):
-        # Top row controls
-        c1, c2, c3 = st.columns([1,1,3])
-        with c1:
-            if st.button("Select all", key=f"{state_key}_all"):
-                st.session_state[state_key]["selected"] = set(symbols)
-                st.rerun(scope="fragment")
-        with c2:
-            if st.button("Clear", key=f"{state_key}_none"):
-                st.session_state[state_key]["selected"] = set()
-                st.rerun(scope="fragment")
-
-        st.caption("Tick the symbols you want to include:")
-
-        # Checkboxes (stable keys so state persists)
-        for s in symbols:
-            key = f"{state_key}_sym_{s}"
-            # default checked if currently selected
-            current = s in selected if key not in st.session_state else st.session_state[key]
-            checked = st.checkbox(s, value=current, key=key)
-            # Update a local working set; we’ll save it after the loop
-            if checked:
-                selected.add(s)
-            else:
-                selected.discard(s)
-
-        # Save merged selection back to session state
-        st.session_state[state_key]["selected"] = selected
-
-    # Return as a list (order like `symbols`)
-    return [s for s in symbols if s in selected]
-
-
-
 @st.fragment(run_every=1)
 def exposure_panel():
     accounts_input = ACCOUNTS or []
@@ -252,29 +202,6 @@ def exposure_panel():
         symbol_sel = st.selectbox("Symbols", options=["(All)"] + symbols, index=0)
     with col2:
         taker_sel = st.selectbox("Platforms", options=["(All)"] + takers, index=0)
-
-
-    #######
-
-    # Platform stays a single choice
-    taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
-    
-    # Symbol checklist in a popover
-    selected_symbols = symbol_checklist(symbols, state_key="symbol_picker")
-    
-    # Apply filters
-    view = df.copy()
-    if selected_symbols:  # if user cleared everything, this will be empty
-        view = view[view["symbol"].isin(selected_symbols)]
-    else:
-        view = view.iloc[0:0]  # show empty if nothing selected
-    
-    if taker_sel != "(All)":
-        view = view[view["taker"] == taker_sel]
-
-#######
-
-
     
     view = df.copy()
     if symbol_sel != "(All)":
