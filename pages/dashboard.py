@@ -270,7 +270,7 @@ def exposure_panel():
                 )
 
             with coll:
-                with st.container(
+                flex = st.container(
                     horizontal=True, 
                     horizontal_alignment="left", 
                     border=True, 
