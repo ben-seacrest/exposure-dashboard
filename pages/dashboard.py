@@ -276,7 +276,7 @@ def exposure_panel():
                     border=True, 
                     vertical_alignment="top"
                 )
-                    flex.write(f"**{data_selection} by Symbol**")
+                flex.write(f"**{data_selection} by Symbol**")
 
             if data_selection == "P/L":
                 st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
