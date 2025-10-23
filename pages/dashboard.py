@@ -151,8 +151,7 @@ def exposure_panel():
     accounts_input = ACCOUNTS or []
     st.caption(f"Accounts from secrets → {accounts_input}")
 
-    with st.spinner("Fetching…"):
-        items, client_code, broker_user, used_body = fetch_positions(accounts_input)
+    items, client_code, broker_user, used_body = fetch_positions(accounts_input)
 
     if not items:
         st.error("No positions returned. Tip: set [centroid].accounts to ['CLIENT tem_b'] or leave it empty to fetch all visible.")
