@@ -336,39 +336,15 @@ def exposure_panel():
                 #},
             )
 
-            # --- Step 1: Sum base_exposure by Base ---
-            base_sum = (
-                view.groupby("Base", dropna=False)["base_exposure"]
-                .sum(numeric_only=True)
-                .rename("base_sum")
-            )
+            # Sums per asset
+            base_sum  = view.groupby("Base", dropna=False)["base_exposure"].sum(numeric_only=True)
+            quote_sum = view.groupby("Quote", dropna=False)["quote_exposure"].sum(numeric_only=True)
             
-            # --- Step 2: Sum quote_exposure by Quote ---
-            quote_sum = (
-                view.groupby("Quote", dropna=False)["quote_exposure"]
-                .sum(numeric_only=True)
-                .rename("quote_sum")
+            # Map to buckets and add
+            buckets_df["Net Total"] = (
+                buckets_df["Symbol"].map(base_sum).fillna(0)
+                + buckets_df["Symbol"].map(quote_sum).fillna(0)
             )
-            
-            # --- Step 3: Combine them together ---
-            # Merge both series into a single DataFrame
-            exposure_sums = (
-                pd.concat([base_sum, quote_sum], axis=1)
-                .fillna(0)
-                .assign(net_total=lambda x: x["base_sum"] + x["quote_sum"])
-            )
-            
-            # --- Step 4: Merge the totals into buckets_df ---
-            buckets_df = buckets_df.merge(
-                exposure_sums["net_total"],
-                how="left",
-                left_on="Symbol",
-                right_index=True
-            )
-            
-            # --- Step 5: Clean up ---
-            buckets_df["Net Total"] = buckets_df["net_total"].fillna(0)
-            buckets_df.drop(columns=["net_total"], inplace=True)
 
             st.dataframe(buckets_df)
                         
