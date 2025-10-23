@@ -146,7 +146,7 @@ def fmt_money(val: float) -> str:
         out = f"{val:.2f}"
     return f"{sign}${out}"
 
-@st.fragment(run_every=1)
+@st.fragment(run_every=0.5)
 def exposure_panel():
     accounts_input = ACCOUNTS or []
     st.caption(f"Accounts from secrets → {accounts_input}")
