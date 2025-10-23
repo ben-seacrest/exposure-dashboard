@@ -250,15 +250,18 @@ def exposure_panel():
         )
 
         with tab2:
-            flex = st.container(horizontal=True, horizontal_alignment="right", border=True)
+            
             coll, colr = st.columns(2)
             
             options = ["P/L", "Volume"]
             with colr:
+                flex = st.container(horizontal=True, horizontal_alignment="right", border=True)
                 data_selection = flex.segmented_control(
                     "Data Selction", 
                     options, 
-                    selection_mode="single"
+                    selection_mode="single",
+                    default="P/L",
+                    label_visibility="hidden",
                 )
 
             with coll:
