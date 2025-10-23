@@ -226,7 +226,7 @@ def exposure_panel():
             row_height=30,
             column_config={
                 "symbol": st.column_config.TextColumn("Symbol"),
-                "net": st.column_config.NumberColumn("Lots", format="dollar"),
+                "net": st.column_config.NumberColumn("Lots", format="accounting"),
                 "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
                 "pl": st.column_config.NumberColumn("P/L", format="dollar"),
                 "taker": st.column_config.TextColumn("Taker"),
