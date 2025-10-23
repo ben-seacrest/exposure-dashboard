@@ -255,7 +255,12 @@ def exposure_panel():
             
             options = ["P/L", "Volume"]
             with colr:
-                flex = st.container(horizontal=True, horizontal_alignment="right", border=True)
+                flex = st.container(
+                    horizontal=True, 
+                    horizontal_alignment="right", 
+                    border=False, 
+                    vertical_alignment="top"
+                )
                 data_selection = flex.segmented_control(
                     "Data Selction", 
                     options, 
