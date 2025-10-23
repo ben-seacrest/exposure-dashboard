@@ -214,26 +214,29 @@ def exposure_panel():
 
     view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
 
-    if view.empty:
-        st.info("No positions for the selected symbol / platform.")
-    else:
-        view_display = view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]]
-    
-        st.dataframe(
-            view_display,
-            use_container_width=True,
-            hide_index=True,
-            row_height=30,
-            column_config={
-                "symbol": st.column_config.TextColumn("Symbol"),
-                "net": st.column_config.NumberColumn("Lots", format="accounting"),
-                "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
-                "pl": st.column_config.NumberColumn("P/L", format="dollar"),
-                "taker": st.column_config.TextColumn("Taker"),
-                "notional": st.column_config.NumberColumn("Notional", format="dollar"),
-                "margin": st.column_config.NumberColumn("Margin", format="dollar"),
-            },
-        )
+    tab1, tab2 = st.tabs(["Data Table", "Charts"])
+
+    with tab1:
+        if view.empty:
+            st.info("No positions for the selected symbol / platform.")
+        else:
+            view_display = view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]]
+        
+            st.dataframe(
+                view_display,
+                use_container_width=True,
+                hide_index=True,
+                row_height=30,
+                column_config={
+                    "symbol": st.column_config.TextColumn("Symbol"),
+                    "net": st.column_config.NumberColumn("Lots", format="accounting"),
+                    "avg_px": st.column_config.NumberColumn("Avg. Price", format="dollar"),
+                    "pl": st.column_config.NumberColumn("P/L", format="dollar"),
+                    "taker": st.column_config.TextColumn("Taker"),
+                    "notional": st.column_config.NumberColumn("Notional", format="dollar"),
+                    "margin": st.column_config.NumberColumn("Margin", format="dollar"),
+                },
+            )
     
     if {"symbol", "pl", "net"}.issubset(view.columns) and not view.empty:
         pl_by_symbol = (
@@ -249,12 +252,12 @@ def exposure_panel():
             .sort_values("net", ascending=True)
         )
 
-        st.divider()
-        st.write("**Profit / Loss by Symbol**")
-        st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=False, use_container_width=True)
-
-        st.write("**Exposure by Symbol (Volume)**")
-        st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=False, use_container_width=True)
+        with tab2:
+            st.write("**Profit / Loss by Symbol**")
+            st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=False, use_container_width=True)
+    
+            st.write("**Exposure by Symbol (Volume)**")
+            st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=False, use_container_width=True)
 
 def dashboard_page():
     first_name = st.session_state.get("first_name", "there")
