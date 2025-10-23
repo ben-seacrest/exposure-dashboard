@@ -149,7 +149,7 @@ def fmt_money(val: float) -> str:
 @st.fragment(run_every=1)
 def exposure_panel():
     accounts_input = ACCOUNTS or []
-    st.caption(f"Accounts from secrets → {accounts_input}")
+    st.caption(f"Accounts from → {accounts_input}")
 
     items, client_code, broker_user, used_body = fetch_positions(accounts_input)
 
@@ -190,8 +190,6 @@ def exposure_panel():
                 value=fmt_money(df["margin"].sum(skipna=True)),
                 border=True
             )
-
-    st.divider()
 
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
