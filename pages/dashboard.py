@@ -5,9 +5,6 @@ import requests
 import streamlit as st
 from requests.exceptions import ReadTimeout, ConnectionError
 
-# -------------------------------#
-# Centroid endpoints
-# -------------------------------#
 centroid = st.secrets["centroid"]
 LOGIN_URL = centroid["login_url"]
 POS_URL   = centroid["positions_url"]
@@ -16,9 +13,6 @@ PASSWORD  = centroid["password"]
 CLIENT_CODE = centroid.get("client_code", "")
 ACCOUNTS = centroid.get("accounts", [])
 
-# -------------------------------#
-# Helpers
-# -------------------------------#
 def normalize_accounts(accounts):
 
     normalized, raw = [], []
@@ -152,10 +146,7 @@ def fmt_money(val: float) -> str:
         out = f"{val:.2f}"
     return f"{sign}${out}"
 
-# -------------------------------#
-# Auto-refresh panel as a fragment
-# -------------------------------#
-@st.fragment(run_every=5)  # seconds; adjust cadence as needed
+@st.fragment(run_every=1)
 def exposure_panel():
     accounts_input = ACCOUNTS or []
     st.caption(f"Accounts from secrets → {accounts_input}")
@@ -172,27 +163,37 @@ def exposure_panel():
         st.warning("Empty DataFrame after normalization.")
         return
 
-    # KPIs
     k = st.columns(3)
     with k[0]:
-        with st.container(border=True):
-            st.metric("Floating P/L", fmt_money(df["pl"].sum(skipna=True)))
+        st.metric(
+            label="Floating P/L", 
+            value=fmt_money(df["pl"].sum(skipna=True)),
+            border=True
+        )
     with k[1]:
-        with st.container(border=True):
-            if "notional" in df.columns and df["notional"].notna().any():
-                st.metric("Notional Volume", fmt_money(df["notional"].sum(skipna=True)))
-            else:
-                est = (df["net"].abs() * df["avg_px"]).sum(skipna=True) if {"net","avg_px"}.issubset(df.columns) else 0.0
-                st.metric("Notional Volume (est.)", fmt_money(est))
+        if "notional" in df.columns and df["notional"].notna().any():
+            st.metric(
+                label="Notional Volume", 
+                value=fmt_money(df["notional"].sum(skipna=True)),
+                border=True
+            )
+        else:
+            est = (df["net"].abs() * df["avg_px"]).sum(skipna=True) if {"net","avg_px"}.issubset(df.columns) else 0.0
+            st.metric(
+                label="Notional Volume (est.)", 
+                value=fmt_money(est),
+                border=True
+            )
     with k[2]:
-        with st.container(border=True):
-            if "margin" in df.columns and df["margin"].notna().any():
-                st.metric("Utilised Margin", fmt_money(df["margin"].sum(skipna=True)))
-
+        if "margin" in df.columns and df["margin"].notna().any():
+            st.metric(
+                label="Utilised Margin", 
+                value=fmt_money(df["margin"].sum(skipna=True)),
+                border=True
+            )
 
     st.divider()
 
-    # Filters
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
 
@@ -202,14 +203,12 @@ def exposure_panel():
     with col2:
         taker_sel = st.selectbox("Platforms", options=["(All)"] + takers, index=0)
 
-    # Apply filters
     view = df.copy()
     if symbol_sel != "(All)":
         view = view[view["symbol"] == symbol_sel]
     if taker_sel != "(All)":
         view = view[view["taker"] == taker_sel]
 
-    # Enforce numeric types (important for sorting)
     for c in ["net", "avg_px", "pl", "notional", "base_exposure", "quote_exposure", "margin"]:
         if c in view.columns:
             view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
@@ -221,7 +220,6 @@ def exposure_panel():
     else:
         st.dataframe(view, use_container_width=True, hide_index=True)
 
-    # Charts (horizontal bars)
     if {"symbol", "pl", "net"}.issubset(view.columns) and not view.empty:
         pl_by_symbol = (
             view.groupby("symbol", dropna=False)["pl"]
@@ -243,9 +241,6 @@ def exposure_panel():
         st.write("**Exposure by Symbol (Volume)**")
         st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=False, use_container_width=True)
 
-# -------------------------------#
-# Page entrypoint
-# -------------------------------#
 def dashboard_page():
     first_name = st.session_state.get("first_name", "there")
     st.subheader(f"Welcome, {first_name}", anchor=False)
