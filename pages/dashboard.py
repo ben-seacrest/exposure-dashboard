@@ -278,7 +278,7 @@ def exposure_panel():
                     vertical_alignment="bottom",
                     height=100,
                 )
-                flex.subeader(f"**{data_selection} by Symbol**", anchor=False)
+                flex.subheading(f"**{data_selection} by Symbol**", anchor=False)
 
             if data_selection == "P/L":
                 st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
