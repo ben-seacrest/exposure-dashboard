@@ -258,7 +258,7 @@ def exposure_panel():
                 flex = st.container(
                     horizontal=True, 
                     horizontal_alignment="right", 
-                    border=False, 
+                    border=True, 
                     vertical_alignment="top"
                 )
                 data_selection = flex.segmented_control(
@@ -270,7 +270,13 @@ def exposure_panel():
                 )
 
             with coll:
-                st.write(f"**{data_selection} by Symbol**")
+                with st.container(
+                    horizontal=True, 
+                    horizontal_alignment="left", 
+                    border=True, 
+                    vertical_alignment="top"
+                )
+                    flex.write(f"**{data_selection} by Symbol**")
 
             if data_selection == "P/L":
                 st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
