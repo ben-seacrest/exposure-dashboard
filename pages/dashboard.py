@@ -259,7 +259,8 @@ def exposure_panel():
                     horizontal=True, 
                     horizontal_alignment="right", 
                     border=True, 
-                    vertical_alignment="top"
+                    vertical_alignment="bottom",
+                    height=100,
                 )
                 data_selection = flex.segmented_control(
                     "Data Selction", 
@@ -274,7 +275,8 @@ def exposure_panel():
                     horizontal=True, 
                     horizontal_alignment="left", 
                     border=True, 
-                    vertical_alignment="top"
+                    vertical_alignment="bottom",
+                    height=100,
                 )
                 flex.write(f"**{data_selection} by Symbol**")
 
