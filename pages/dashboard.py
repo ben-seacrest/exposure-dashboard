@@ -250,7 +250,7 @@ def exposure_panel():
         )
 
         with tab2:
-            flex = st.container(horizontal=True, horizontal_alignment="right")
+            flex = st.container(horizontal=True, horizontal_alignment="right", border=True)
             coll, colr = st.columns(2)
             
             options = ["P/L", "Volume"]
