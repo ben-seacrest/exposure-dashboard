@@ -217,25 +217,19 @@ def exposure_panel():
     if view.empty:
         st.info("No positions for the selected symbol / platform.")
     else:
-        view_display = (
-            view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]]
-            .rename(columns={
-                "symbol": "Symbol",
-                "net": "Lots",
-                "avg_px": "Avg. Price",
-                "pl": "P/L",
-                "taker": "Taker",
-                "notional": "Notional",
-                "margin": "Margin",
-            })
-        )
+        view_display = (view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]])
     
-        with st.expander("Data Table"):
-            st.dataframe(
-                view_display, 
-                use_container_width=True, 
-                hide_index=True
-            )
+
+        st.dataframe(
+            view_display, 
+            use_container_width=True, 
+            hide_index=True,
+            row_height=30,
+            column_config={
+                "pl":st.column_config.NumberColumn(
+                    "P/L",
+                    format="dollar",
+        )
     
     if {"symbol", "pl", "net"}.issubset(view.columns) and not view.empty:
         pl_by_symbol = (
