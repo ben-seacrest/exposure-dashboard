@@ -251,7 +251,7 @@ def exposure_panel():
 
         with tab2:
             
-            coll, colr = st.columns(2)
+            coll, colr = st.columns(2, vertical_alignment="top")
             
             options = ["P/L", "Volume"]
             with colr:
@@ -272,12 +272,10 @@ def exposure_panel():
             with coll:
                 st.write(f"**{data_selection} by Symbol**")
 
-            
-            
-            st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
-    
-            st.write("**Exposure by Symbol (Volume)**")
-            st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=True)
+            if data_selection == "P/L":
+                st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
+            else:
+                st.bar_chart(net_by_symbol, y="net", x="symbol", horizontal=True)
 
 def dashboard_page():
     first_name = st.session_state.get("first_name", "there")
