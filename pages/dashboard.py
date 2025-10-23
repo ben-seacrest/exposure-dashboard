@@ -250,7 +250,22 @@ def exposure_panel():
         )
 
         with tab2:
-            st.write("**Profit / Loss by Symbol**")
+            flex = st.container(horizontal=True, horizontal_alignment="right")
+            coll, colr = st.columns(2)
+            
+            options = ["P/L", "Volume"]
+            with colr:
+                data_selection = flex.segmented_control(
+                    "Data Selction", 
+                    options, 
+                    selection_mode="single"
+                )
+
+            with coll:
+                st.write(f"**{data_selection} by Symbol**")
+
+            
+            
             st.bar_chart(pl_by_symbol, y="pl", x="symbol", horizontal=True)
     
             st.write("**Exposure by Symbol (Volume)**")
