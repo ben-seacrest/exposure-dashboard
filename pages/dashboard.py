@@ -261,7 +261,6 @@ def exposure_panel():
         
             st.dataframe(
                 view_display,
-                use_container_width=True,
                 hide_index=True,
                 row_height=30,
                 column_config={
