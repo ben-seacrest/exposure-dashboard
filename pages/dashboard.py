@@ -230,7 +230,10 @@ def exposure_panel():
             })
         )
     
-        st.dataframe(view_display, use_container_width=True, hide_index=True)
+        st.table(
+            view_display, 
+            border="horizontal"
+        )
     
     if {"symbol", "pl", "net"}.issubset(view.columns) and not view.empty:
         pl_by_symbol = (
