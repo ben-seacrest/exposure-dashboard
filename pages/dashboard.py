@@ -13,7 +13,7 @@ PASSWORD  = centroid["password"]
 CLIENT_CODE = centroid.get("client_code", "")
 ACCOUNTS = centroid.get("accounts", [])
 
-data = [
+symbols_data = [
     ["AUDCAD", "AUD", "CAD"],
     ["AUDCHF", "AUD", "CHF"],
     ["AUDJPY", "AUD", "JPY"],
@@ -65,6 +65,43 @@ data = [
     ["XAGUSD", "XAG", "USD"],
     ["XAUUSD", "XAU", "USD"],
 ]
+
+symbols_df = pd.DataFrame(symbols_data, columns=["Symbol", "Base", "Quote"])
+
+buckets_data = [
+    "AUD",
+    "BCH",
+    "BRENT",
+    "BTC",
+    "CAD",
+    "CHF",
+    "Cotton",
+    "DE40",
+    "ETH",
+    "EUR",
+    "Gasoil",
+    "GBP",
+    "JP225",
+    "LTC",
+    "NZD",
+    "UK100",
+    "US100",
+    "US30",
+    "US500",
+    "USD",
+    "USOIL",
+    "XAG",
+    "XAU",
+    "JPY",
+    "CNH",
+    "MXN",
+    "NOK",
+    "PLN",
+    "SEK",
+    "ZAR",
+]
+
+buckets_df = pd.DataFrame(buckets_data, columns=["Asset"])
 
 def normalize_accounts(accounts):
 
@@ -273,7 +310,18 @@ def exposure_panel():
             st.info("No positions for the selected symbol / platform.")
         else:
             view_display = view[["symbol", "net", "avg_px", "pl", "taker", "notional", "margin"]]
-        
+
+            # Merge view with symbols_df to append Base and Quote
+            view = view.merge(
+                symbols_df,
+                how="left",
+                left_on="symbol",
+                right_on="Symbol"
+            )
+            
+            # Drop the duplicate 'Symbol' column from symbols_df after merge
+            view.drop(columns=["Symbol"], inplace=True)
+            
             st.dataframe(
                 view,
                 hide_index=True,
@@ -288,8 +336,8 @@ def exposure_panel():
                 #},
             )
 
-            symbols_df = pd.DataFrame(data, columns=["Symbol", "Base", "Quote"])
-            st.dataframe(symbols_df)
+            
+            
         
 
 
