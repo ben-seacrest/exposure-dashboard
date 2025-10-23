@@ -13,14 +13,6 @@ PASSWORD  = centroid["password"]
 CLIENT_CODE = centroid.get("client_code", "")
 ACCOUNTS = centroid.get("accounts", [])
 
-# Remember last KPI values across fragment reruns
-if "kpi_prev" not in st.session_state:
-    st.session_state.kpi_prev = {
-        "pl": None,
-        "notional": None,
-        "margin": None,
-    }
-    
 def normalize_accounts(accounts):
 
     normalized, raw = [], []
@@ -170,64 +162,34 @@ def exposure_panel():
         st.warning("Empty DataFrame after normalization.")
         return
 
-    # ----- KPIs with deltas -----
-    # Current values
-    curr_pl = float(df["pl"].sum(skipna=True))
-    
-    if "notional" in df.columns and df["notional"].notna().any():
-        curr_notional = float(df["notional"].sum(skipna=True))
-    else:
-        curr_notional = float((df["net"].abs() * df["avg_px"]).sum(skipna=True)) if {"net","avg_px"}.issubset(df.columns) else 0.0
-    
-    curr_margin = float(df["margin"].sum(skipna=True)) if ("margin" in df.columns and df["margin"].notna().any()) else 0.0
-    
-    # Previous values (None on first run)
-    prev_pl       = st.session_state.kpi_prev.get("pl")
-    prev_notional = st.session_state.kpi_prev.get("notional")
-    prev_margin   = st.session_state.kpi_prev.get("margin")
-    
-    # Deltas (None → hide arrow)
-    delta_pl       = None if prev_pl is None else curr_pl - prev_pl
-    delta_notional = None if prev_notional is None else curr_notional - prev_notional
-    delta_margin   = None if prev_margin is None else curr_margin - prev_margin
-    
-    # Render metrics (delta strings work fine; negative shows red)
     k = st.columns(3)
     with k[0]:
         st.metric(
-            label="Floating P/L",
-            value=fmt_money(curr_pl),
-            delta=None if delta_pl is None else fmt_money(delta_pl),
-            delta_color="normal",
-            border=True,
+            label="Floating P/L", 
+            value=fmt_money(df["pl"].sum(skipna=True)),
+            border=True
         )
     with k[1]:
-        st.metric(
-            label="Notional Volume",
-            value=fmt_money(curr_notional),
-            delta=None if delta_notional is None else fmt_money(delta_notional),
-            delta_color="normal",
-            border=True,
-        )
+        if "notional" in df.columns and df["notional"].notna().any():
+            st.metric(
+                label="Notional Volume", 
+                value=fmt_money(df["notional"].sum(skipna=True)),
+                border=True
+            )
+        else:
+            est = (df["net"].abs() * df["avg_px"]).sum(skipna=True) if {"net","avg_px"}.issubset(df.columns) else 0.0
+            st.metric(
+                label="Notional Volume (est.)", 
+                value=fmt_money(est),
+                border=True
+            )
     with k[2]:
-        st.metric(
-            label="Utilised Margin",
-            value=fmt_money(curr_margin),
-            delta=None if delta_margin is None else fmt_money(delta_margin),
-            # if a *lower* margin is “good”, flip the colors:
-            # delta_color="inverse",
-            delta_color="normal",
-            border=True,
-        )
-    
-    # Update stored previous values *after* rendering
-    st.session_state.kpi_prev.update({
-        "pl": curr_pl,
-        "notional": curr_notional,
-        "margin": curr_margin,
-    })
-
-
+        if "margin" in df.columns and df["margin"].notna().any():
+            st.metric(
+                label="Utilised Margin", 
+                value=fmt_money(df["margin"].sum(skipna=True)),
+                border=True
+            )
 
     
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
@@ -261,6 +223,7 @@ def exposure_panel():
         
             st.dataframe(
                 view_display,
+                use_container_width=True,
                 hide_index=True,
                 row_height=30,
                 column_config={
