@@ -258,9 +258,6 @@ def exposure_panel():
     st.dataframe(
         buckets_df.sort_values("Net Total", key=lambda s: s.abs(), ascending=False), 
         hide_index=True,
-        column_config={
-            "Net Total": st.column_config.NumberColumn(format="dollar"),
-        }
     )
 
 # -------------------------------#
