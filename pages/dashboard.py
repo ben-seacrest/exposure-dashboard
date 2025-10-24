@@ -242,6 +242,11 @@ def exposure_panel():
             view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
     view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
 
+    st.dataframe(
+        view,
+        hide_index=True,
+    )
+    
     # --- Merge Base/Quote columns ---
     view = view.merge(symbols_df, how="left", left_on="symbol", right_on="Symbol").drop(columns=["Symbol"])
 
