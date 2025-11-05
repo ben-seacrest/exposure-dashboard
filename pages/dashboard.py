@@ -220,21 +220,21 @@ def exposure_panel():
         if "notional" in df.columns:
             st.metric("Notional Volume", fmt_money(df["notional"].sum(skipna=True)), border=True)
 
-
     st.divider()
     
     # --- Filters ---
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
-    
-    symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        taker_sel = st.multiselect("Platform", takers, default=takers)
-    
-    with col2:
-        tem_sel = st.multiselect("TEM", options=["Challenge", "Funded", "All"])
+
+    with st.expander("Filter Settings):
+        symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            taker_sel = st.multiselect("Platform", takers, default=takers)
+        
+        with col2:
+            tem_sel = st.multiselect("TEM", options=["Challenge", "Funded", "All"])
     
     # --- Filter view ---
     view = df.copy()
@@ -260,8 +260,6 @@ def exposure_panel():
         # If nothing selected, show nothing (optional behaviour)
         view = view.iloc[0:0]
     
-
-    
     # Numeric conversions
     for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
         if c in view.columns:
@@ -274,7 +272,7 @@ def exposure_panel():
         "account": "Account",
         "symbol": "Symbol",
         "net": "Net Volume",
-        "avg_px": "VWAP",
+        "avg_px": "Price",
         "last_time": "Updated At",
         "taker": "Platform",
         "pl": "Profit/Loss",
