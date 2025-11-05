@@ -230,7 +230,6 @@ def exposure_panel():
     with col1:
         symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
         
-        
         #st.selectbox("Symbol", options=["(All)"] + symbols, index=0)
     with col2:
         taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
@@ -239,13 +238,23 @@ def exposure_panel():
 
     # --- Filter view ---
     view = df.copy()
-    if symbol_sel != "(All)":
-        view = view[view["symbol"] == symbol_sel]
+    
+    # symbol_sel is now a list from st.multiselect
+    if symbol_sel:  # only filter if at least one selected
+        view = view[view["symbol"].isin(symbol_sel)]
+    
+    # taker_sel still a single value from selectbox
     if taker_sel != "(All)":
         view = view[view["taker"] == taker_sel]
+    
+    # optional: filter TEM if you wire it up
+    if tem_sel != "All":
+        view = view[view["tem"] == tem_sel]
+    
     for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
         if c in view.columns:
             view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
+    
     view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
 
     exposure_view = view.rename(columns={
