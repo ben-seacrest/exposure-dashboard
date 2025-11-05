@@ -227,14 +227,13 @@ def exposure_panel():
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
     
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
+    symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
     
-    with col2:
+    col1, col2 = st.columns(2)
+    with col1:
         taker_sel = st.multiselect("Platform", takers, default=takers)
     
-    with col3:
+    with col2:
         tem_sel = st.multiselect("TEM", options=["Challenge", "Funded", "All"])
     
     # --- Filter view ---
