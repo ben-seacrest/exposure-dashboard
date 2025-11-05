@@ -243,8 +243,18 @@ def exposure_panel():
             view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
     view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
 
+    exposure_view = view.rename(columns={
+    "symbol": "Symbol",
+    "taker": "Taker",
+    "pl": "Profit/Loss",
+    "notional": "Notional Value",
+    # Add more mappings as needed
+    })
+
+    exposure_view = exposure_view.drop(columns=["Taker"], errors="ignore")
+    
     st.dataframe(
-        view,
+        exposure_view,
         hide_index=True,
     )
     
