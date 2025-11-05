@@ -212,7 +212,7 @@ def exposure_panel():
     # --- KPI metrics ---
     k = st.columns(3)
     with k[0]:
-        st.metric("Realized P/L")
+        st.metric("Realized P/L", "$0.00", border=True)
     
     with k[1]:
         st.metric("Floating P/L", fmt_money(df["pl"].sum(skipna=True)), border=True)
