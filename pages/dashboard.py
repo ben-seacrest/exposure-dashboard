@@ -244,14 +244,20 @@ def exposure_panel():
     view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
 
     exposure_view = view.rename(columns={
+    "account": "Account",
     "symbol": "Symbol",
+    "net": "Net Volume",
+    "avg_px": "VWAP",
+    "last_time": "Updated At",
     "taker": "Taker",
     "pl": "Profit/Loss",
     "notional": "Notional Value",
+    "base_exposure": "Base Exposure",    
+    "quote_exposure": "Quote Exposure",   
     # Add more mappings as needed
     })
 
-    exposure_view = exposure_view.drop(columns=["Taker"], errors="ignore")
+    exposure_view = exposure_view.drop(columns=["Account", "Updated At", "margin"], errors="ignore")
     
     st.dataframe(
         exposure_view,
