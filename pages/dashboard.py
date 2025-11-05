@@ -247,10 +247,6 @@ def exposure_panel():
     if taker_sel != "(All)":
         view = view[view["taker"] == taker_sel]
     
-    # optional: filter TEM if you wire it up
-    if tem_sel != "All":
-        view = view[view["tem"] == tem_sel]
-    
     for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
         if c in view.columns:
             view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
