@@ -232,10 +232,10 @@ def exposure_panel():
         symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
     
     with col2:
-        taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
+        taker_sel = st.multiselect("Platform", takers, default=takers)
     
     with col3:
-        tem_sel = st.selectbox("TEM", options=["Challenge", "Funded", "All"])
+        tem_sel = st.multiselect("TEM", options=["Challenge", "Funded", "All"])
     
     # --- Filter view ---
     view = df.copy()
