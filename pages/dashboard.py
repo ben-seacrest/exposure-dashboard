@@ -226,11 +226,16 @@ def exposure_panel():
     # --- Filters ---
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        symbol_sel = st.selectbox("Symbols", options=["(All)"] + symbols, index=0)
+        symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
+        
+        
+        #st.selectbox("Symbol", options=["(All)"] + symbols, index=0)
     with col2:
-        taker_sel = st.selectbox("Platforms", options=["(All)"] + takers, index=0)
+        taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
+    with col3:
+        tem_sel = st.selectbox("TEM", options=[
 
     # --- Filter view ---
     view = df.copy()
@@ -249,7 +254,7 @@ def exposure_panel():
     "net": "Net Volume",
     "avg_px": "VWAP",
     "last_time": "Updated At",
-    "taker": "Taker",
+    "taker": "Platform",
     "pl": "Profit/Loss",
     "notional": "Notional Value",
     "base_exposure": "Base Exposure",    
