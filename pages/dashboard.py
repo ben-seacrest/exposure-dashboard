@@ -212,13 +212,14 @@ def exposure_panel():
     # --- KPI metrics ---
     k = st.columns(3)
     with k[0]:
-        st.metric("Floating P/L", fmt_money(df["pl"].sum(skipna=True)), border=True)
+        st.metric("Realized P/L")
+    
     with k[1]:
+        st.metric("Floating P/L", fmt_money(df["pl"].sum(skipna=True)), border=True)
+    with k[2]:
         if "notional" in df.columns:
             st.metric("Notional Volume", fmt_money(df["notional"].sum(skipna=True)), border=True)
-    with k[2]:
-        if "margin" in df.columns:
-            st.metric("Utilised Margin", fmt_money(df["margin"].sum(skipna=True)), border=True)
+
 
     st.divider()
 
