@@ -243,9 +243,10 @@ def exposure_panel():
     # Normalise types so they match what comes from the widgets
     if "symbol" in view.columns:
         view["symbol"] = view["symbol"].astype(str)
+        
     if "taker" in view.columns:
         view["taker"] = view["taker"].astype(str)
-    
+
     # Symbol filter (multiselect returns a list)
     if symbol_sel and len(symbol_sel) > 0:
         view = view[view["symbol"].isin(symbol_sel)]
@@ -254,13 +255,13 @@ def exposure_panel():
         view = view.iloc[0:0]
     
     # Platform filter
-    if taker_sel != "(All)":
-        view = view[view["taker"] == taker_sel]
+    if taker_sel and len(taker_sel) > 0:
+        view = view[view["taker"].isin(taker_sel)]
+    else:
+        # If nothing selected, show nothing (optional behaviour)
+        view = view.iloc[0:0]
     
-    # Optional TEM filter if you have a 'tem' column
-    if "tem" in view.columns and tem_sel != "All":
-        view["tem"] = view["tem"].astype(str)
-        view = view[view["tem"] == tem_sel]
+
     
     # Numeric conversions
     for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
