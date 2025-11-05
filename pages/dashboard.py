@@ -222,77 +222,77 @@ def exposure_panel():
 
 
     st.divider()
-
-# --- Filters ---
-symbols = sorted(df["symbol"].dropna().astype(str).unique())
-takers  = sorted(df["taker"].dropna().astype(str).unique())
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
-
-with col2:
-    taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
-
-with col3:
-    tem_sel = st.selectbox("TEM", options=["Challenge", "Funded", "All"])
-
-# --- Filter view ---
-view = df.copy()
-
-# Normalise types so they match what comes from the widgets
-if "symbol" in view.columns:
-    view["symbol"] = view["symbol"].astype(str)
-if "taker" in view.columns:
-    view["taker"] = view["taker"].astype(str)
-
-# Symbol filter (multiselect returns a list)
-if symbol_sel and len(symbol_sel) > 0:
-    view = view[view["symbol"].isin(symbol_sel)]
-else:
-    # If nothing selected, show nothing (optional behaviour)
-    view = view.iloc[0:0]
-
-# Platform filter
-if taker_sel != "(All)":
-    view = view[view["taker"] == taker_sel]
-
-# Optional TEM filter if you have a 'tem' column
-if "tem" in view.columns and tem_sel != "All":
-    view["tem"] = view["tem"].astype(str)
-    view = view[view["tem"] == tem_sel]
-
-# Numeric conversions
-for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
-    if c in view.columns:
-        view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
-
-view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
-
-# Rename for display
-exposure_view = view.rename(columns={
-    "account": "Account",
-    "symbol": "Symbol",
-    "net": "Net Volume",
-    "avg_px": "VWAP",
-    "last_time": "Updated At",
-    "taker": "Platform",
-    "pl": "Profit/Loss",
-    "notional": "Notional Value",
-    "base_exposure": "Base Exposure",
-    "quote_exposure": "Quote Exposure",
-})
-
-# Hide columns from final display
-exposure_view = exposure_view.drop(
-    columns=["Account", "Updated At", "margin"],
-    errors="ignore",
-)
-
-st.dataframe(
-    exposure_view,
-    hide_index=True,
-)
+    
+    # --- Filters ---
+    symbols = sorted(df["symbol"].dropna().astype(str).unique())
+    takers  = sorted(df["taker"].dropna().astype(str).unique())
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
+    
+    with col2:
+        taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
+    
+    with col3:
+        tem_sel = st.selectbox("TEM", options=["Challenge", "Funded", "All"])
+    
+    # --- Filter view ---
+    view = df.copy()
+    
+    # Normalise types so they match what comes from the widgets
+    if "symbol" in view.columns:
+        view["symbol"] = view["symbol"].astype(str)
+    if "taker" in view.columns:
+        view["taker"] = view["taker"].astype(str)
+    
+    # Symbol filter (multiselect returns a list)
+    if symbol_sel and len(symbol_sel) > 0:
+        view = view[view["symbol"].isin(symbol_sel)]
+    else:
+        # If nothing selected, show nothing (optional behaviour)
+        view = view.iloc[0:0]
+    
+    # Platform filter
+    if taker_sel != "(All)":
+        view = view[view["taker"] == taker_sel]
+    
+    # Optional TEM filter if you have a 'tem' column
+    if "tem" in view.columns and tem_sel != "All":
+        view["tem"] = view["tem"].astype(str)
+        view = view[view["tem"] == tem_sel]
+    
+    # Numeric conversions
+    for c in ["net","avg_px","pl","notional","base_exposure","quote_exposure","margin"]:
+        if c in view.columns:
+            view[c] = pd.to_numeric(view[c], errors="coerce").round(2)
+    
+    view = view.sort_values(by="pl", key=lambda s: s.abs(), ascending=False)
+    
+    # Rename for display
+    exposure_view = view.rename(columns={
+        "account": "Account",
+        "symbol": "Symbol",
+        "net": "Net Volume",
+        "avg_px": "VWAP",
+        "last_time": "Updated At",
+        "taker": "Platform",
+        "pl": "Profit/Loss",
+        "notional": "Notional Value",
+        "base_exposure": "Base Exposure",
+        "quote_exposure": "Quote Exposure",
+    })
+    
+    # Hide columns from final display
+    exposure_view = exposure_view.drop(
+        columns=["Account", "Updated At", "margin"],
+        errors="ignore",
+    )
+    
+    st.dataframe(
+        exposure_view,
+        hide_index=True,
+    )
     
     # --- Merge Base/Quote columns ---
     view = view.merge(symbols_df, how="left", left_on="symbol", right_on="Symbol").drop(columns=["Symbol"])
