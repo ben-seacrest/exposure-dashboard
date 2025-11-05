@@ -235,7 +235,7 @@ def exposure_panel():
     with col2:
         taker_sel = st.selectbox("Platform", options=["(All)"] + takers, index=0)
     with col3:
-        tem_sel = st.selectbox("TEM", options=[
+        tem_sel = st.selectbox("TEM", options=["Challenge", "Funded", "All"])
 
     # --- Filter view ---
     view = df.copy()
