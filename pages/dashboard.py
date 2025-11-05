@@ -226,7 +226,7 @@ def exposure_panel():
     symbols = sorted(df["symbol"].dropna().astype(str).unique())
     takers  = sorted(df["taker"].dropna().astype(str).unique())
 
-    with st.expander("Filter Settings):
+    with st.expander("Filter Settings"):
         symbol_sel = st.multiselect("Symbols", symbols, default=symbols)
         
         col1, col2 = st.columns(2)
